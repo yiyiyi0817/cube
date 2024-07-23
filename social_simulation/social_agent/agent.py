@@ -75,7 +75,7 @@ class SocialAgent:
             model_type, model_config.__dict__)
         self.model_token_limit = self.model_backend.token_limit
         context_creator = ScoreBasedContextCreator(
-            self.model_backend.token_counter,
+            # self.model_backend.token_counter,
             self.model_token_limit,
         )
         self.memory = ChatHistoryMemory(context_creator, window_size=5)
@@ -109,16 +109,16 @@ class SocialAgent:
         # agent_log.info(f"Agent {self.agent_id} is running with prompt: {openai_messages}")
 
         if self.has_function_call:
-            response = self.model_backend.run(openai_messages)
+            response = await self.model_backend.arun(openai_messages)
             # agent_log.info(f"Agent {self.agent_id} response: {response}")
-            if response.choices[0].message.function_call:
-                action_name = response.choices[0].message.function_call.name
-                args = json.loads(
-                    response.choices[0].message.function_call.arguments)
-                print(f"Agent {self.agent_id} is performing "
-                      f"twitter action: {action_name} with args: {args}")
-                await getattr(self.env.action, action_name)(**args)
-                self.perform_agent_graph_action(action_name, args)
+            if response.choices[0].message.tool_calls:
+                for tool_call in response.choices[0].message.tool_calls:
+                    action_name = tool_call.function.name
+                    args = json.loads(tool_call.function.arguments)
+                    print(f"Agent {self.agent_id} is performing "
+                          f"twitter action: {action_name} with args: {args}")
+                    await getattr(self.env.action, action_name)(**args)
+                    self.perform_agent_graph_action(action_name, args)
 
         else:
             retry = 5
@@ -132,7 +132,7 @@ class SocialAgent:
                         "content": self.system_message.content
                     }] + openai_messages
 
-                response = self.model_backend.run(openai_messages)
+                response = self.model_backend.arun(openai_messages)
                 agent_log.info(f"Agent {self.agent_id} response: {response}")
                 content = response.choices[0].message.content
                 try:
