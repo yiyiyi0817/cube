@@ -114,15 +114,15 @@ async def running(
                 else:
                     raise ValueError("Unsupported value of 'group'")
 
-        for _, node_data in agent_graph.get_agents():
-            agent = node_data['agent']
+        for _, agent in agent_graph.get_agents():
+            # agent = node_data['agent']
             if agent.user_info.is_controllable is False:
                 await agent.perform_action_by_llm()
 
     await channel.write_to_receive_queue((None, None, ActionType.EXIT))
     await task
 
-    print_db_contents(db_path)
+    # print_db_contents(db_path)
 
 
 if __name__ == "__main__":
