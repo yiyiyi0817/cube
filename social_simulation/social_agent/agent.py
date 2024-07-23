@@ -40,7 +40,7 @@ class SocialAgent:
         str = "/mnt/hwfile/trustai/models/Meta-Llama-3-8B-Instruct",  # noqa
         server_url: str = "http://10.140.0.144:8000/v1",
         stop_tokens: list[str] = None,
-        model_type: ModelType = ModelType.LLAMA_3,
+        model_type: ModelType = ModelType.GPT_3_5_TURBO,
         temperature: float = 0.0,
         agent_graph: "AgentGraph" = None,
     ):
@@ -69,7 +69,7 @@ class SocialAgent:
             self.has_function_call = True
             model_config = ChatGPTConfig(
                 temperature=temperature,
-                # tools=self.env.action.get_openai_function_list(),
+                tools=self.env.action.get_openai_function_list(),
             )
         self.model_backend: BaseModelBackend = ModelFactory.create(
             model_type, model_config.__dict__)
@@ -106,11 +106,11 @@ class SocialAgent:
         openai_messages, num_tokens = self.memory.get_context()
         content = ""
 
-        agent_log.info(f"Agent {self.agent_id} is running with prompt: {openai_messages}")
+        # agent_log.info(f"Agent {self.agent_id} is running with prompt: {openai_messages}")
 
         if self.has_function_call:
             response = self.model_backend.run(openai_messages)
-            agent_log.info(f"Agent {self.agent_id} response: {response}")
+            # agent_log.info(f"Agent {self.agent_id} response: {response}")
             if response.choices[0].message.function_call:
                 action_name = response.choices[0].message.function_call.name
                 args = json.loads(
