@@ -282,6 +282,7 @@ async def generate_community_agents(
 
         # controllable的agent_id全都在llm agent的agent_id的前面
         agent = SocialAgent(i, user_info, channel)
+        agent.plan_daily_life()
 
         # Add agent to the agent graph
         agent_graph.add_agent(agent)
