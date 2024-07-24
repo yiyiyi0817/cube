@@ -69,3 +69,11 @@ Ensure that your output can be directly converted into **JSON format**, and avoi
         """
 
         return system_content
+
+    def to_community_system_message(self) -> str:
+        system_content = f"""
+Your basic infomation is: {self.name}, a {self.age}-year-old {self.gender.lower()}, is a {self.occupation.lower()}.
+Your description is: {self.description},
+Your bio is : {self.profile.get('other_info').get('user_profile')}
+"""
+        return system_content

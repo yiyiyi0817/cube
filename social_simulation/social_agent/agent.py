@@ -48,9 +48,10 @@ class SocialAgent:
         self.user_info = user_info
         self.channel = channel
         self.env = SocialEnvironment(SocialAction(agent_id, channel))
+        print(self.user_info.to_community_system_message())
         self.system_message = BaseMessage.make_assistant_message(
             role_name="User",
-            content=self.user_info.to_system_message(),
+            content=self.user_info.to_community_system_message(),
         )
         self.model_type = model_type
 
@@ -79,12 +80,15 @@ class SocialAgent:
             self.model_token_limit,
         )
         self.memory = ChatHistoryMemory(context_creator, window_size=5)
-        self.system_message = BaseMessage.make_assistant_message(
-            role_name="system",
-            content=self.user_info.to_system_message()  # system prompt
-        )
+        # self.system_message = BaseMessage.make_assistant_message(
+        #     role_name="system",
+        #     content=self.user_info.to_system_message()  # system prompt
+        # )
         self.agent_graph = agent_graph
         print(Fore.RED + f"{agent_id}: model type {model_type}" + Fore.RESET)
+
+    def plan_daily_life(self):
+        pass
 
     async def perform_action_by_llm(self):
         # Get 5 random tweets:
