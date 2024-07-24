@@ -4,6 +4,8 @@ import inspect
 import json
 from typing import TYPE_CHECKING, Any
 import logging
+from datetime import datetime
+
 from camel.configs import ChatGPTConfig, OpenSourceConfig
 from camel.memories import (ChatHistoryMemory, MemoryRecord,
                             ScoreBasedContextCreator)
@@ -14,9 +16,10 @@ from camel.agents.chat_agent import ChatAgent
 from colorama import Fore, Style
 
 from social_simulation.social_agent.agent_action import SocialAction
-from social_simulation.social_agent.agent_environment import SocialEnvironment
+from social_simulation.social_agent.agent_environment import CommunityEnvironment
 from social_simulation.social_platform import Channel
 from social_simulation.social_platform.config import UserInfo
+from social_simulation.clock.clock import Clock
 
 if TYPE_CHECKING:
     from social_simulation.social_agent import AgentGraph
@@ -37,6 +40,8 @@ class SocialAgent:
         agent_id: int,
         user_info: UserInfo,
         channel: Channel,
+        clock: Clock,
+        start_time: datetime,
         model_path:
         str = "/mnt/hwfile/trustai/models/Meta-Llama-3-8B-Instruct",  # noqa
         server_url: str = "http://10.140.0.144:8000/v1",
@@ -48,7 +53,7 @@ class SocialAgent:
         self.agent_id = agent_id
         self.user_info = user_info
         self.channel = channel
-        self.env = SocialEnvironment(SocialAction(agent_id, channel))
+        self.env = CommunityEnvironment(clock, start_time, None)
         # print(self.user_info.to_community_system_message())
         self.system_message = BaseMessage.make_assistant_message(
             role_name="User",
@@ -100,6 +105,7 @@ class SocialAgent:
         plan_agent = ChatAgent(self.system_message)
         response = plan_agent.step(plan_message)
         self.schedule = response.msg.content
+        self.env.plan = response.msg.content
 
     async def perform_action_by_llm(self):
         # Get 5 random tweets:
