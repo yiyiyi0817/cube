@@ -251,3 +251,39 @@ async def generate_reddit_agents(
         agent_user_id_mapping[i + control_user_num] = user_id
 
     return agent_graph
+
+
+async def generate_community_agents(
+    agent_info_path: str,
+    channel: Channel,
+) -> AgentGraph:
+    agent_graph = AgentGraph()
+
+    with open(agent_info_path, 'r') as file:
+        agent_info = json.load(file)
+
+    for i in range(len(agent_info)):
+        # Instantiate an agent
+        profile = {
+            'nodes': [],  # Relationships with other agents
+            'edges': [],  # Relationship details
+            'other_info': {},
+        }
+
+        # Update agent profile with additional information
+        profile['other_info']['user_profile'] = agent_info[i]['bio']
+
+        user_info = UserInfo(name=agent_info[i]['nickname'],
+                             description=agent_info[i]['description'],
+                             age=agent_info[i]['age'],
+                             occupation=agent_info[i]['occupation'],
+                             gender=agent_info[i]['gender'],
+                             profile=profile)
+
+        # controllable的agent_id全都在llm agent的agent_id的前面
+        agent = SocialAgent(i, user_info, channel)
+
+        # Add agent to the agent graph
+        agent_graph.add_agent(agent)
+
+    return agent_graph

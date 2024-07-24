@@ -8,6 +8,9 @@ class UserInfo:
     description: str | None = None
     profile: dict[str, Any] | None = None
     is_controllable: bool = False
+    age: int | None = None
+    occupation: str | None = None
+    gender: str | None = None
 
     def to_system_message(self) -> str:
         name_string = ""

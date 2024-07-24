@@ -7,7 +7,7 @@ import pytest
 from camel.types import ModelType
 
 from social_simulation.social_agent.agents_generator import (
-    generate_agents, generate_controllable_agents)
+    generate_agents, generate_controllable_agents, generate_community_agents)
 from social_simulation.social_platform.channel import Channel
 from social_simulation.social_platform.platform import Platform
 
@@ -61,3 +61,16 @@ async def test_generate_controllable(monkeypatch):
     await channel.write_to_receive_queue((None, None, "exit"))
     await task
     assert agent_graph.get_num_nodes() == 27
+
+
+@pytest.mark.asyncio
+async def test_generate_community(monkeypatch):
+    agent_info_path = "./test/test_data/residents_info_7.json"
+    channel = Channel()
+    if osp.exists(test_db_filepath):
+        os.remove(test_db_filepath)
+
+    agent_graph = await generate_community_agents(
+        agent_info_path, channel)
+
+    assert agent_graph.get_num_nodes() == 7
