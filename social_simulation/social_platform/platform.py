@@ -13,8 +13,10 @@ from social_simulation.social_platform.platform_utils import PlatformUtils
 from social_simulation.social_platform.typing import CommunityActionType
 from social_simulation.social_platform.unity_api.unity_server import (
     start_server, stop_server, send_position_to_unity,
-    send_stop_to_unity, get_received_message
+    send_stop_to_unity
 )
+from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+
 import logging
 
 twitter_log = logging.getLogger(name='social.twitter')
@@ -37,18 +39,17 @@ room_coordinate: dict = {
 # platform:输入agent_id, action_type, unity情况，返回到达/指定do_something时间结束
 # 并在过程中记录agent指令和unity指令进入数据库
 class Platform:
-    async def __init__(
+    def __init__(
             self, db_path: str, channel: Any,
+            unity_queue_manager: UnityQueueManager,
             sandbox_clock: Clock, start_time: datetime):
         create_db(db_path)
-        server_tasks = await start_server()
-        print("please start unity in 10s...")
-        await asyncio.sleep(10)
 
         self.db = sqlite3.connect(db_path, check_same_thread=False)
         self.db_cursor = self.db.cursor()
 
         self.channel = channel
+        self.unity_queue_mgr = unity_queue_manager
         self.start_time = start_time
         self.sandbox_clock = sandbox_clock
 
@@ -66,7 +67,10 @@ class Platform:
                 self.db.close()
                 break
             elif action == CommunityActionType.GO_TO:
-                pass
+                result = await self.go_to(
+                    agent_id=agent_id, room_name=message)
+                print('goto_result:', result)
+                await self.channel.send_to((message_id, agent_id, result))
             elif action == CommunityActionType.STOP:
                 pass
             elif action == CommunityActionType.DO_SOMETHING:
@@ -75,19 +79,41 @@ class Platform:
                 raise ValueError(f"Action {action} is not supported")
 
     # 注册
-    async def go_to(self, agent_id, room_name):
-        current_time = self.sandbox_clock.time_transfer(
-            datetime.now(), self.start_time)
-        x, y, z = room_coordinate.get(room_name)
-        await send_position_to_unity(agent_id, x, y, z)
-        action_info = {"room": room_name}
-        self.pl_utils._record_trace(agent_id, CommunityActionType.GO_TO.value,
-                                    action_info, current_time)
-        received_message = await get_received_message()
-        while True:
-
+    async def go_to(self, agent_id: str, room_name: str):
         try:
-            return {"success": True, "arrived_room": room_name}
+            current_time = self.sandbox_clock.time_transfer(
+                datetime.now(), self.start_time)
+            x, y, z = room_coordinate.get(room_name)
+            await send_position_to_unity(agent_id, x, y, z)
+            action_info = {"room": room_name}
+            self.pl_utils._record_trace(
+                agent_id, "plan_to", action_info, current_time)
+
+            received_message = await self.unity_queue_mgr.get_message(agent_id)
+            print('platform receive message:', received_message)
+            while received_message:
+                if received_message['message'].startswith("ARRIVED"):
+                    break
+                if received_message['message'].startswith("NEW_AGENT:"):
+                    new_agent = received_message['message'].split(":")[1]
+                    # 记录相遇操作到trace表
+                    action_info = {"new_agent": new_agent}
+                    self.pl_utils._record_trace(
+                        agent_id, CommunityActionType.MEET.value, action_info)
+                    await send_stop_to_unity(agent_id)
+                    await asyncio.sleep(2)
+                    await send_position_to_unity(agent_id, x, y, z)
+
+                received_message = await self.unity_queue_mgr.get_message(
+                    agent_id)
+
+            current_time = self.sandbox_clock.time_transfer(
+                datetime.now(), self.start_time)
+            # 记录go_to操作到trace表
+            action_info = {"room": room_name}
+            self.pl_utils._record_trace(
+                agent_id, "arrived", action_info, current_time)
+            return {"success": True, "arrived": room_name}
         except Exception as e:
             return {"success": False, "error": str(e)}
 

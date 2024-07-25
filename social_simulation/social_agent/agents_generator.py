@@ -8,11 +8,13 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from datetime import datetime
 from camel.types.enums import ModelType
 
 from social_simulation.social_agent import AgentGraph, SocialAgent
 from social_simulation.social_platform import Channel
 from social_simulation.social_platform.config import UserInfo
+from social_simulation.clock.clock import Clock
 
 
 async def generate_agents(
@@ -256,6 +258,8 @@ async def generate_reddit_agents(
 async def generate_community_agents(
     agent_info_path: str,
     channel: Channel,
+    clock: Clock,
+    start_time: datetime
 ) -> AgentGraph:
     agent_graph = AgentGraph()
 
@@ -281,7 +285,7 @@ async def generate_community_agents(
                              profile=profile)
 
         # controllable的agent_id全都在llm agent的agent_id的前面
-        agent = SocialAgent(i, user_info, channel)
+        agent = SocialAgent(i, user_info, channel, clock, start_time)
         agent.plan_daily_life()
 
         # Add agent to the agent graph

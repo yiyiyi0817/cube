@@ -4,7 +4,7 @@ import json
 from abc import ABC, abstractmethod
 from string import Template
 
-from social_simulation.social_agent.agent_action import SocialAction
+from social_simulation.social_agent.community_agent_action import CommunityAction
 from social_simulation.clock.clock import Clock
 from datetime import datetime
 
@@ -81,7 +81,9 @@ class CommunityEnvironment(Environment):
         "your profile, your current location, time, and daily schedule.")
 
     def __init__(
-            self, clock: Clock, start_time: datetime, plan: str):
+            self, clock: Clock, start_time: datetime,
+            plan: str, action: CommunityAction):
+        self.action = action
         self.room = None
         self.clock = clock
         self.start_time = start_time

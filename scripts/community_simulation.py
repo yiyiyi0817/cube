@@ -10,12 +10,14 @@ from colorama import Back
 from yaml import safe_load
 
 from social_simulation.clock.clock import Clock
-from social_simulation.social_agent.agents_generator import (
-    gen_control_agents_with_data, generate_reddit_agents)
+from social_simulation.social_agent.agents_generator import generate_community_agents
 from social_simulation.social_platform.channel import Channel
 from social_simulation.social_platform.platform import Platform
-from social_simulation.social_platform.typing import ActionType
+from social_simulation.social_platform.typing import CommunityActionType
 from social_simulation.testing.show_db import print_db_contents
+from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+from social_simulation.social_platform.unity_api.unity_server import start_server, stop_server
+
 
 parser = argparse.ArgumentParser(description="Arguments for script.")
 parser.add_argument(
@@ -27,10 +29,9 @@ parser.add_argument(
 )
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
-DEFAULT_DB_PATH = os.path.join(DATA_DIR, "mock_reddit.db")
-DEFAULT_USER_PATH = os.path.join(DATA_DIR, "reddit",
-                                 "filter_user_results.json")
-DEFAULT_PAIR_PATH = os.path.join(DATA_DIR, "reddit", "RS-RC-pairs.json")
+DEFAULT_DB_PATH = os.path.join(DATA_DIR, "mock_community.db")
+DEFAULT_USER_PATH = os.path.join(DATA_DIR, "community",
+                                 "residents_info_3.json")
 
 ROUND_POST_NUM = 20
 
@@ -48,6 +49,7 @@ ROUND_POST_NUM = 20
 
 # 分步计划：先按照时间步写，后面变成纯异步持续action
 
+
 async def running(
     db_path: str | None = DEFAULT_DB_PATH,
     user_path: str | None = DEFAULT_USER_PATH,
@@ -62,42 +64,49 @@ async def running(
     start_time = datetime.now()
     clock = Clock(k=clock_factor)
     channel = Channel()
+    unity_queue_mgr = UnityQueueManager(['1', '2', '3'])
+
     infra = Platform(
         db_path,
         channel,
+        unity_queue_mgr,
         clock,
         start_time,
     )
     task = asyncio.create_task(infra.running())
 
-    agent_graph = await generate_reddit_agents(
+    agent_graph = await generate_community_agents(
         user_path,
         channel,
-        agent_graph,
-        agent_user_id_mapping,
+        clock,
+        start_time
     )
 
-    for timestep in range(num_timesteps):
-        print(Back.GREEN + f"timestep:{timestep}" + Back.RESET)
+    server_tasks = await start_server(unity_queue_mgr)
+    print("please start unity in 10s...")
+    await asyncio.sleep(10)
 
-        for _, agent in agent_graph.get_agents():
-            # agent = node_data['agent']
-            if agent.user_info.is_controllable is False:
-                await agent.perform_action_by_llm()
+    try:
+        # for timestep in range(num_timesteps):
+        #     print(Back.GREEN + f"timestep:{timestep}" + Back.RESET)
 
-    await channel.write_to_receive_queue((None, None, ActionType.EXIT))
-    await task
+        #     for _, agent in agent_graph.get_agents():
+        #         if agent.user_info.is_controllable is False:
+        #             await agent.perform_action_by_llm()
+        await channel.write_to_receive_queue(
+            ('1', 'garden', CommunityActionType.GO_TO))
+        await asyncio.sleep(10)
+        await channel.write_to_receive_queue(
+            (None, None, CommunityActionType.EXIT))
+        await task
+    except KeyboardInterrupt:
+        print("Stopping the control script...")
+    finally:
+        # 停止服务器
+        await stop_server(*server_tasks)
 
-    # print_db_contents(db_path)
+    print_db_contents(db_path)
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    if os.path.exists(args.config_path):
-        with open(args.config_path, "r") as f:
-            cfg = safe_load(f)
-        data_params = cfg.get("data")
-        simulation_params = cfg.get("simulation")
-        asyncio.run(running(**data_params, **simulation_params))
-    else:
-        asyncio.run(running())
+    asyncio.run(running())

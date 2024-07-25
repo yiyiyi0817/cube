@@ -32,6 +32,7 @@ class CommunityActionType(Enum):
     GO_TO = "go_to"
     STOP = "stop"
     DO_SOMETHING = "do_something"
+    MEET = "meet"
 
 
 class RecsysType(Enum):

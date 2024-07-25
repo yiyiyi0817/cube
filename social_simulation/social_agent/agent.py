@@ -15,7 +15,7 @@ from camel.types import ModelType, OpenAIBackendRole
 from camel.agents.chat_agent import ChatAgent
 from colorama import Fore, Style
 
-from social_simulation.social_agent.agent_action import SocialAction
+from social_simulation.social_agent.community_agent_action import CommunityAction
 from social_simulation.social_agent.agent_environment import CommunityEnvironment
 from social_simulation.social_platform import Channel
 from social_simulation.social_platform.config import UserInfo
@@ -53,7 +53,8 @@ class SocialAgent:
         self.agent_id = agent_id
         self.user_info = user_info
         self.channel = channel
-        self.env = CommunityEnvironment(clock, start_time, None)
+        self.env = CommunityEnvironment(
+            clock, start_time, None, CommunityAction(agent_id, channel))
         # print(self.user_info.to_community_system_message())
         self.system_message = BaseMessage.make_assistant_message(
             role_name="User",

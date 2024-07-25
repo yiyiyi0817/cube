@@ -14,7 +14,7 @@ class UnityQueueManager:
         # print('put_message:', agent_id, message)
         await self.queue_dict[agent_id].put(message)
 
-    async def get_message(self, agent_id: str, timeout: float = 0.1) -> dict:
+    async def get_message(self, agent_id: str, timeout: float = 15) -> dict:
         try:
             receive_result = await asyncio.wait_for(
                 self.queue_dict[agent_id].get(), timeout=timeout)
