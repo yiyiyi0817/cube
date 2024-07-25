@@ -27,6 +27,13 @@ class ActionType(Enum):
     DO_NOTHING = "do_nothing"
 
 
+class CommunityActionType(Enum):
+    EXIT = "exit"
+    GO_TO = "go_to"
+    STOP = "stop"
+    DO_SOMETHING = "do_something"
+
+
 class RecsysType(Enum):
     TWITTER = "twitter"
     REDDIT = "reddit"
