@@ -94,7 +94,7 @@ async def running(
         #         if agent.user_info.is_controllable is False:
         #             await agent.perform_action_by_llm()
         await channel.write_to_receive_queue(
-            ('1', 'garden', CommunityActionType.GO_TO))
+            ('3', 'garden', CommunityActionType.GO_TO))
         await asyncio.sleep(10)
         await channel.write_to_receive_queue(
             (None, None, CommunityActionType.EXIT))
