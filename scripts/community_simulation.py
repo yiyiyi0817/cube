@@ -97,8 +97,8 @@ async def running(
             ('3', 'garden', CommunityActionType.GO_TO))
         print("send 3', 'garden', CommunityActionType.GO_TO)")
         await channel.write_to_receive_queue(
-            ('1', 'library', CommunityActionType.GO_TO))
-        print("send '1', 'library', CommunityActionType.GO_TO")
+            ('1', 'garden', CommunityActionType.GO_TO))
+        print("send '1', 'garden', CommunityActionType.GO_TO")
         # await channel.write_to_receive_queue(
         #     ('2', ('eat food', 3), CommunityActionType.DO_SOMETHING))
         # print("send '2', ('eat food', 3), CommunityActionType.DO_SOMETHING")

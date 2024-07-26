@@ -112,6 +112,7 @@ class Platform:
             print('platform receive message:', received_message)
             while listen_flag:
                 if received_message and received_message['message'].startswith("ARRIVED"):
+                    await send_stop_to_unity(agent_id)
                     listen_flag = False
                 if received_message and received_message['message'].startswith("NEW_AGENT:"):
                     new_agent = received_message['message'].split(":")[1]
