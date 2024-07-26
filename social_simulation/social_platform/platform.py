@@ -78,7 +78,6 @@ class Platform:
             else:
                 raise ValueError(f"Action {action} is not supported")
 
-    # 注册
     async def go_to(self, agent_id: str, room_name: str):
         try:
             current_time = self.sandbox_clock.time_transfer(
@@ -89,12 +88,16 @@ class Platform:
             self.pl_utils._record_trace(
                 agent_id, "plan_to", action_info, current_time)
 
+            listen_flag = True
             received_message = await self.unity_queue_mgr.get_message(agent_id)
+            if received_message and received_message['message'].startswith("ARRIVED"):
+                listen_flag = False
+
             print('platform receive message:', received_message)
-            while received_message:
-                if received_message['message'].startswith("ARRIVED"):
-                    break
-                if received_message['message'].startswith("NEW_AGENT:"):
+            while listen_flag:
+                if received_message and received_message['message'].startswith("ARRIVED"):
+                    listen_flag = False
+                if received_message and received_message['message'].startswith("NEW_AGENT:"):
                     new_agent = received_message['message'].split(":")[1]
                     # 记录相遇操作到trace表
                     action_info = {"new_agent": new_agent}
@@ -117,42 +120,39 @@ class Platform:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def refresh(self, agent_id: int):
+    async def do_something(self, agent_id: str, activity: str, duration: int):
         try:
-            user_id = self.pl_utils._check_agent_userid(agent_id)
-            if not user_id:
-                return self.pl_utils._not_signup_error_message(agent_id)
+            current_time = self.sandbox_clock.time_transfer(
+                datetime.now(), self.start_time)
 
-            # 从rec表中获取指定user_id的所有post_id
-            rec_query = "SELECT post_id FROM rec WHERE user_id = ?"
-            self.pl_utils._execute_db_command(rec_query, (user_id, ))
-            rec_results = self.db_cursor.fetchall()
+            action_info = {"activity": activity}
+            self.pl_utils._record_trace(
+                agent_id, "start_activity", action_info, current_time)
 
-            post_ids = [row[0] for row in rec_results]
-            selected_post_ids = post_ids
+            received_message = await self.unity_queue_mgr.get_message(agent_id)
+            print('platform receive message:', received_message)
+            while received_message:
+                if received_message['message'].startswith("ARRIVED"):
+                    break
+                if received_message['message'].startswith("NEW_AGENT:"):
+                    new_agent = received_message['message'].split(":")[1]
+                    # 记录相遇操作到trace表
+                    action_info = {"new_agent": new_agent}
+                    self.pl_utils._record_trace(
+                        agent_id, CommunityActionType.MEET.value, action_info)
+                    await send_stop_to_unity(agent_id)
+                    await asyncio.sleep(2)
+                    await send_position_to_unity(agent_id, x, y, z)
 
-            # 如果post_id数量 >= self.refresh_post_count，则随机选择指定数量的post_id
-            if len(post_ids) >= self.refresh_post_count:
-                selected_post_ids = random.sample(post_ids,
-                                                  self.refresh_post_count)
+                received_message = await self.unity_queue_mgr.get_message(
+                    agent_id)
 
-            # 根据选定的post_id从post表中获取post详情
-            placeholders = ', '.join('?' for _ in selected_post_ids)
-            # 构造SQL查询字符串
-            post_query = (
-                f"SELECT post_id, user_id, content, created_at, num_likes, "
-                f"num_dislikes FROM post WHERE post_id IN ({placeholders})")
-            self.pl_utils._execute_db_command(post_query, selected_post_ids)
-            results = self.db_cursor.fetchall()
-            if not results:
-                return {"success": False, "message": "No posts found."}
-            results_with_comments = self.pl_utils._add_comments_to_posts(
-                results)
-            # 记录操作到trace表
-            action_info = {"posts": results_with_comments}
-            self.pl_utils._record_trace(user_id, ActionType.REFRESH.value,
-                                        action_info)
-
-            return {"success": True, "posts": results_with_comments}
+            current_time = self.sandbox_clock.time_transfer(
+                datetime.now(), self.start_time)
+            # 记录go_to操作到trace表
+            action_info = {"room": activity}
+            self.pl_utils._record_trace(
+                agent_id, "arrived", action_info, current_time)
+            return {"success": True, "arrived": activity}
         except Exception as e:
             return {"success": False, "error": str(e)}
