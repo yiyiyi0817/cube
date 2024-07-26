@@ -100,12 +100,13 @@ class SocialAgent:
             content=(
                 f"Use your role information: \n"
                 f"{self.user_info.to_community_system_message()} \n"
-                f"to briefly plan your daily schedule."
+                f"to plan your daily schedule briefly and specify specific sleep times, such as from 11pm to 7am."
             )
         )
         plan_agent = ChatAgent(self.system_message)
         response = plan_agent.step(plan_message)
         self.schedule = response.msg.content
+        print(f"Agent {self.agent_id}'s daily plan: {response.msg.content}")
         self.env.plan = response.msg.content
 
     async def perform_action_by_llm(self):
@@ -114,10 +115,12 @@ class SocialAgent:
         user_msg = BaseMessage.make_user_message(
             role_name="User",
             content=(
-                f"Please perform social media actions after observing the "
-                f"platform environments. Notice that don't limit your actions "
-                f"for example to just like the posts. "
-                f"Here is your social media environment: {env_prompt}"),
+                f"Please perform social daily life actions after observing "
+                f"the environments. Notice that don't limit your actions "
+                f"for example to just go to a place. "
+                f"If normal sleep time is reached, you can only call do_something and pass in the sleep parameter. "
+                f"Here is your environment: "
+                f"{env_prompt}"),
         )
         self.memory.write_record(
             MemoryRecord(
@@ -138,9 +141,12 @@ class SocialAgent:
                     action_name = tool_call.function.name
                     args = json.loads(tool_call.function.arguments)
                     print(f"Agent {self.agent_id} is performing "
-                          f"twitter action: {action_name} with args: {args}")
-                    await getattr(self.env.action, action_name)(**args)
-                    self.perform_agent_graph_action(action_name, args)
+                          f"action: {action_name} with args: {args}")
+                    excu_result = await getattr(self.env.action, action_name)(**args)
+                    # 更新agent所在的房间
+                    if action_name == "go_to" and excu_result.get('success'):
+                        self.env.room = excu_result.get('arrived')
+                    # self.perform_agent_graph_action(action_name, args)
 
         else:
             retry = 5

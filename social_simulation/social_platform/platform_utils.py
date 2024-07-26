@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import aiosqlite
 
 
 class PlatformUtils:
@@ -51,3 +52,32 @@ class PlatformUtils:
             trace_insert_query,
             (user_id, current_time, action_type, action_info_str),
             commit=True)
+
+
+class AsyncPlatformUtils:
+    def __init__(self, db_path, start_time, sandbox_clock):
+        self.db_path = db_path
+        self.start_time = start_time
+        self.sandbox_clock = sandbox_clock
+
+    async def _execute_db_command(self, command, args=(), commit=False):
+        async with aiosqlite.connect(self.db_path) as db:
+            async with db.execute(command, args) as cursor:
+                if commit:
+                    await db.commit()
+                return cursor
+
+    async def _record_trace(
+            self, user_id, action_type, action_info, current_time=None):
+        if current_time is None:
+            current_time = self.sandbox_clock.time_transfer(
+                datetime.now(), self.start_time)
+        trace_insert_query = (
+            "INSERT INTO trace (user_id, created_at, action, info) "
+            "VALUES (?, ?, ?, ?)")
+        action_info_str = json.dumps(action_info)
+        await self._execute_db_command(
+            trace_insert_query,
+            (user_id, current_time, action_type, action_info_str),
+            commit=True
+        )

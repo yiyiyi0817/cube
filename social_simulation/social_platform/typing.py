@@ -35,6 +35,14 @@ class CommunityActionType(Enum):
     MEET = "meet"
 
 
+class RoomName(Enum):
+    GARDEN = "garden"
+    LIBRARY = "library"
+    MUSIC_ROOM = "music_room"
+    OFFICE = "office"
+    SCHOOL = "school"
+
+
 class RecsysType(Enum):
     TWITTER = "twitter"
     REDDIT = "reddit"

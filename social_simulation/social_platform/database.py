@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 import os.path as osp
 import sqlite3
+import aiosqlite
+import aiofiles
 from typing import Any, Dict, List
 
 SCHEMA_DIR = "social_platform/schema"
@@ -33,33 +35,29 @@ def get_schema_dir_path() -> str:
     return schema_dir
 
 
-def create_db(db_path: str | None = None):
+async def create_db_async(db_path: str | None = None):
     r"""Create the database if it does not exist. A :obj:`twitter.db`
-    file will be automatically created  in the :obj:`data` directory.
+    file will be automatically created in the :obj:`data` directory.
     """
     schema_dir = get_schema_dir_path()
     if db_path is None:
         db_path = get_db_path()
 
-    # Connect to the database:
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    # 异步连接到数据库:
+    async with aiosqlite.connect(db_path) as conn:
+        async with conn.cursor() as cursor:
+            try:
+                # 读取并执行 trace table SQL 脚本:
+                trace_sql_path = osp.join(schema_dir, TRACE_SCHEMA_SQL)
+                async with aiofiles.open(trace_sql_path, 'r') as sql_file:  # 使用 aiofiles 读取文件
+                    trace_sql_script = await sql_file.read()
+                await cursor.executescript(trace_sql_script)
+                # 提交更改:
+                await conn.commit()
 
-    try:
-        # Read and execute the trace table SQL script:
-        trace_sql_path = osp.join(schema_dir, TRACE_SCHEMA_SQL)
-        with open(trace_sql_path, 'r') as sql_file:
-            trace_sql_script = sql_file.read()
-        cursor.executescript(trace_sql_script)
-        # Commit the changes:
-        conn.commit()
-
-        print("Trace tables created successfully.")
-    except sqlite3.Error as e:
-        print(f"An error occurred while creating tables: {e}")
-    finally:
-        # Close the database connection
-        conn.close()
+                print("Trace tables created successfully.")
+            except aiosqlite.Error as e:
+                print(f"An error occurred while creating tables: {e}")
 
 
 def print_db_tables_summary():

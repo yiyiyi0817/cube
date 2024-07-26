@@ -49,11 +49,15 @@ ROUND_POST_NUM = 20
 
 # 分步计划：先按照时间步写，后面变成纯异步持续action
 
+async def agent_task(agent):
+    while True:
+        await agent.perform_action_by_llm()
+        await asyncio.sleep(0.1)  # 短暂休眠以允许其他任务运行
 
 async def running(
     db_path: str | None = DEFAULT_DB_PATH,
     user_path: str | None = DEFAULT_USER_PATH,
-    num_timesteps: int = 5,
+    num_timesteps: int = 3,
     clock_factor: int = 60,
 ) -> None:
     db_path = DEFAULT_DB_PATH if db_path is None else db_path
@@ -64,7 +68,7 @@ async def running(
     start_time = datetime.now()
     clock = Clock(k=clock_factor)
     channel = Channel()
-    unity_queue_mgr = UnityQueueManager(['1', '2', '3'])
+    unity_queue_mgr = UnityQueueManager(['0', '1', '2'])
 
     infra = Platform(
         db_path,
@@ -73,6 +77,7 @@ async def running(
         clock,
         start_time,
     )
+    await infra.create_async_db()
     task = asyncio.create_task(infra.running())
 
     agent_graph = await generate_community_agents(
@@ -87,22 +92,25 @@ async def running(
     await asyncio.sleep(10)
 
     try:
-        # for timestep in range(num_timesteps):
-        #     print(Back.GREEN + f"timestep:{timestep}" + Back.RESET)
+        tasks = []
+        for _, agent in agent_graph.get_agents():
+            if agent.user_info.is_controllable is False:
+                task = asyncio.create_task(agent_task(agent))
+                tasks.append(task)
+        
+        await asyncio.gather(*tasks)
+        '''        
+        for timestep in range(num_timesteps):
+        print(Back.GREEN + f"timestep:{timestep}" + Back.RESET)
+        tasks = []  # 初始化任务列表
+        for _, agent in agent_graph.get_agents():
+            if agent.user_info.is_controllable is False:
+                # 将perform_action_by_llm的调用包装成一个任务，并添加到任务列表中
+                task = asyncio.create_task(agent.perform_action_by_llm())
+                tasks.append(task)
+        # 异步等待所有任务完成
+        await asyncio.gather(*tasks)'''
 
-        #     for _, agent in agent_graph.get_agents():
-        #         if agent.user_info.is_controllable is False:
-        #             await agent.perform_action_by_llm()
-        await channel.write_to_receive_queue(
-            ('3', 'garden', CommunityActionType.GO_TO))
-        print("send 3', 'garden', CommunityActionType.GO_TO)")
-        await channel.write_to_receive_queue(
-            ('1', 'garden', CommunityActionType.GO_TO))
-        print("send '1', 'garden', CommunityActionType.GO_TO")
-        # await channel.write_to_receive_queue(
-        #     ('2', ('eat food', 3), CommunityActionType.DO_SOMETHING))
-        # print("send '2', ('eat food', 3), CommunityActionType.DO_SOMETHING")
-        await asyncio.sleep(15)
         await channel.write_to_receive_queue(
             (None, None, CommunityActionType.EXIT))
         await task

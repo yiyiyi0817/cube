@@ -8,8 +8,8 @@ from typing import Any
 
 
 from social_simulation.clock.clock import Clock
-from social_simulation.social_platform.database import create_db
-from social_simulation.social_platform.platform_utils import PlatformUtils
+from social_simulation.social_platform.database import create_db_async
+from social_simulation.social_platform.platform_utils import AsyncPlatformUtils
 from social_simulation.social_platform.typing import CommunityActionType
 from social_simulation.social_platform.unity_api.unity_server import (
     send_position_to_unity, send_stop_to_unity
@@ -28,9 +28,9 @@ twitter_log.addHandler(file_handler)
 room_coordinate: dict = {
     "garden": (-17, 0, 14),
     "library": (19, 0, 14),
-    "music room": (-23, 0, -13),
+    "music_room": (-23, 0, -13),
     "office": (-17, 0, -12),
-    "school": (15, 0, -12)
+    "bed_room": (15, 0, -12)
 }
 
 
@@ -42,24 +42,27 @@ class Platform:
             self, db_path: str, channel: Any,
             unity_queue_manager: UnityQueueManager,
             sandbox_clock: Clock, start_time: datetime):
-        create_db(db_path)
-
-        self.db = sqlite3.connect(db_path, check_same_thread=False)
-        self.db_cursor = self.db.cursor()
-
+        self.db_path = db_path
         self.channel = channel
         self.unity_queue_mgr = unity_queue_manager
         self.start_time = start_time
         self.sandbox_clock = sandbox_clock
 
-        self.pl_utils = PlatformUtils(
-            self.db, self.db_cursor, self.start_time, self.sandbox_clock)
+        self.pl_utils = AsyncPlatformUtils(
+            db_path, self.start_time, self.sandbox_clock)
+
+    async def create_async_db(self):
+        await create_db_async(self.db_path)
+        # 其他可能的异步初始化代码
+        self.pl_utils = AsyncPlatformUtils(
+            self.db_path, self.start_time, self.sandbox_clock)
+        return self
 
     async def running(self):
         tasks = []  # 用于跟踪所有创建的任务
         while True:
             message_id, data = await self.channel.receive_from()
-            print('platform receive:', message_id, data)
+            # print('platform receive:', message_id, data)
             if data[2] == CommunityActionType.EXIT:
                 # 等待所有先前的任务完成
                 if tasks:
@@ -85,7 +88,8 @@ class Platform:
                 print('goto_result:', result)
                 await self.channel.send_to((message_id, agent_id, result))
             elif action == CommunityActionType.DO_SOMETHING:
-                result = await self.do_something(agent_id=agent_id, activity_message=message)
+                result = await self.do_something(
+                    agent_id=agent_id, activity_message=message)
                 print('do_something_result:', result)
                 await self.channel.send_to((message_id, agent_id, result))
             else:
@@ -96,20 +100,17 @@ class Platform:
 
     async def go_to(self, agent_id: str, room_name: str):
         try:
-            current_time = self.sandbox_clock.time_transfer(
-                datetime.now(), self.start_time)
+            action_info = {"room": room_name}
+            await self.pl_utils._record_trace(agent_id, "plan_to", action_info)
             x, y, z = room_coordinate.get(room_name)
             await send_position_to_unity(agent_id, x, y, z)
-            action_info = {"room": room_name}
-            self.pl_utils._record_trace(
-                agent_id, "plan_to", action_info, current_time)
 
             listen_flag = True
             received_message = await self.unity_queue_mgr.get_message(agent_id)
             if received_message and received_message['message'].startswith("ARRIVED"):
                 listen_flag = False
 
-            print('platform receive message:', received_message)
+            # print('platform receive message:', received_message)
             while listen_flag:
                 if received_message and received_message['message'].startswith("ARRIVED"):
                     await send_stop_to_unity(agent_id)
@@ -118,7 +119,7 @@ class Platform:
                     new_agent = received_message['message'].split(":")[1]
                     # 记录相遇操作到trace表
                     action_info = {"new_agent": new_agent}
-                    self.pl_utils._record_trace(
+                    await self.pl_utils._record_trace(
                         agent_id, CommunityActionType.MEET.value, action_info)
                     await send_stop_to_unity(agent_id)
                     await asyncio.sleep(2)
@@ -127,14 +128,17 @@ class Platform:
                 received_message = await self.unity_queue_mgr.get_message(
                     agent_id)
 
-            current_time = self.sandbox_clock.time_transfer(
-                datetime.now(), self.start_time)
             # 记录go_to操作到trace表
             action_info = {"room": room_name}
-            self.pl_utils._record_trace(
-                agent_id, "arrived", action_info, current_time)
+            await self.pl_utils._record_trace(
+                agent_id, "arrived", action_info)
             return {"success": True, "arrived": room_name}
         except Exception as e:
+            print(f"Error type: {type(e)}")
+            print(f"Error args: {e.args}")
+            print(f"Error: {str(e)}")
+            import traceback
+            print(f"Traceback: {traceback.format_exc()}")
             return {"success": False, "error": str(e)}
 
     async def do_something(
@@ -147,7 +151,7 @@ class Platform:
             duration_delta: datetime = timedelta(minutes=duration)
 
             action_info = {"activity": activity}
-            self.pl_utils._record_trace(
+            await self.pl_utils._record_trace(
                 agent_id, "start_activity", action_info, start_time)
 
             while True:
@@ -156,7 +160,7 @@ class Platform:
                 elapsed_time = now_time - start_time  # 计算已过去的时间
                 # print('elapsed_time:', elapsed_time)
                 if elapsed_time > duration_delta:
-                    print("Finished running for specified duration")
+                    # print("Finished running for specified duration")
                     break
 
                 received_message = await self.unity_queue_mgr.get_message(
@@ -165,12 +169,12 @@ class Platform:
                     new_agent = received_message['message'].split(":")[1]
                     # 记录相遇操作到trace表
                     action_info = {"new_agent": new_agent}
-                    self.pl_utils._record_trace(
+                    await self.pl_utils._record_trace(
                         agent_id, CommunityActionType.MEET.value, action_info)
 
             # 记录go_to操作到trace表
             action_info = {"activity": activity}
-            self.pl_utils._record_trace(
+            await self.pl_utils._record_trace(
                 agent_id, "end_activity", action_info, now_time)
             return {"success": True, "activity": activity}
         except Exception as e:
