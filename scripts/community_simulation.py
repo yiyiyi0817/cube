@@ -95,7 +95,14 @@ async def running(
         #             await agent.perform_action_by_llm()
         await channel.write_to_receive_queue(
             ('3', 'garden', CommunityActionType.GO_TO))
-        await asyncio.sleep(10)
+        print("send 3', 'garden', CommunityActionType.GO_TO)")
+        await channel.write_to_receive_queue(
+            ('1', 'library', CommunityActionType.GO_TO))
+        print("send '1', 'library', CommunityActionType.GO_TO")
+        # await channel.write_to_receive_queue(
+        #     ('2', ('eat food', 3), CommunityActionType.DO_SOMETHING))
+        # print("send '2', ('eat food', 3), CommunityActionType.DO_SOMETHING")
+        await asyncio.sleep(15)
         await channel.write_to_receive_queue(
             (None, None, CommunityActionType.EXIT))
         await task
