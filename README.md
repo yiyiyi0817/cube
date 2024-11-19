@@ -142,18 +142,19 @@ The Reddit recommendation system is highly time-sensitive. Currently, one time s
 
 <!-- - Public release of our dataset on Hugging Face (November 05, 2024) -->
 
-- Initial release of OASIS github repository (November 15, 2024)
+- Initial release of CUBE github repository (November 23, 2024)
 
 
 ## 🔒 Limitation
 
 We would like to thank Douglas for designing the logo of our project.
 
-
 ## 🗝️ Contributing to 🧊CUBE
 
 We greatly appreciate your interest in contributing to our open-source initiative. To ensure a smooth collaboration and the success of contributions, we adhere to a set of contributing guidelines similar to those established by CAMEL. For a comprehensive understanding of the steps involved in contributing to our project, please refer to the CAMEL contributing guidelines [here](https://github.com/camel-ai/camel/blob/master/CONTRIBUTING.md). 🤝🚀
-
+<p align="center">
+  <img src='assets/communication.png' width=600>
+</p>
 An essential part of contributing involves not only submitting new features with accompanying tests (and, ideally, examples) but also ensuring that these contributions pass our automated pytest suite. This approach helps us maintain the project's quality and reliability by verifying compatibility and functionality.
 
 ## 🎉 Acknowledgment
