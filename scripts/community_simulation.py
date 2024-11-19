@@ -8,6 +8,7 @@ from datetime import datetime
 
 from colorama import Back
 from yaml import safe_load
+from colorama import Fore, Style
 
 from social_simulation.clock.clock import Clock
 from social_simulation.social_agent.agents_generator import generate_community_agents
@@ -31,7 +32,7 @@ parser.add_argument(
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 DEFAULT_DB_PATH = os.path.join(DATA_DIR, "mock_community.db")
 DEFAULT_USER_PATH = os.path.join(DATA_DIR, "community",
-                                 "residents_info_3.json")
+                                 "residents_info_7.json")
 
 ROUND_POST_NUM = 20
 
@@ -57,19 +58,18 @@ async def agent_task(agent):
 async def running(
     db_path: str | None = DEFAULT_DB_PATH,
     user_path: str | None = DEFAULT_USER_PATH,
-    num_timesteps: int = 3,
-    clock_factor: int = 60,
+    # num_timesteps: int = 3,
+    clock_factor: int = 120,
 ) -> None:
     db_path = DEFAULT_DB_PATH if db_path is None else db_path
     user_path = DEFAULT_USER_PATH if user_path is None else user_path
     if os.path.exists(db_path):
         os.remove(db_path)
-
-    start_time = datetime.now()
+    # 实验从2024年7月1日早上八点开始
+    start_time = datetime(2024, 7, 1, 8, 0)
     clock = Clock(k=clock_factor)
     channel = Channel()
-    unity_queue_mgr = UnityQueueManager(['0', '1', '2'])
-
+    unity_queue_mgr = UnityQueueManager(['0', '1', '2', '3', '4', '5', '6'])
     infra = Platform(
         db_path,
         channel,
@@ -88,7 +88,7 @@ async def running(
     )
 
     server_tasks = await start_server(unity_queue_mgr)
-    print("please start unity in 10s...")
+    print(Fore.GREEN + "please start unity in 10s...\n" + Fore.RESET)
     await asyncio.sleep(10)
 
     try:
@@ -97,9 +97,9 @@ async def running(
             if agent.user_info.is_controllable is False:
                 task = asyncio.create_task(agent_task(agent))
                 tasks.append(task)
-        
+
         await asyncio.gather(*tasks)
-        '''        
+        '''
         for timestep in range(num_timesteps):
         print(Back.GREEN + f"timestep:{timestep}" + Back.RESET)
         tasks = []  # 初始化任务列表

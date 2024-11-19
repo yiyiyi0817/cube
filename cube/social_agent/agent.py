@@ -116,8 +116,8 @@ class SocialAgent:
             role_name="User",
             content=(
                 f"Please perform social daily life actions after observing "
-                f"the environments. Notice that don't limit your actions "
-                f"for example to just go to a place. "
+                f"the environments. Go to somewhere before you do something! "
+                f"Note that if you want to do_something, first check if you are in the right room, if not, then call the go_to function to go to the right room. For example, you can only call sleep do_something from your own bedroom"
                 f"If normal sleep time is reached, you can only call do_something and pass in the sleep parameter. "
                 f"Here is your environment: "
                 f"{env_prompt}"),

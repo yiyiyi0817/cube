@@ -26,11 +26,62 @@ file_handler.setFormatter(logging.Formatter('%(levelname)s - %(asctime)s - %(nam
 twitter_log.addHandler(file_handler)
 
 room_coordinate: dict = {
-    "garden": (-17, 0, 14),
-    "library": (19, 0, 14),
-    "music_room": (-23, 0, -13),
-    "office": (-17, 0, -12),
-    "bed_room": (15, 0, -12)
+    "entrance(Building B)": (14, 0, 17),
+    "kitchen(Building B)": (25, 0, 13),
+    "dining room(Building B)": (0, 0, 14),
+
+    "Bob's private toilet(Building B)": (0, 0, 20),
+    "Bob's private living room(Building B)": (-1, 0, 23),
+    "Bob's private bedroom(Building B)": (-1, 0, 26),
+    "Bob's private balcony(Building B)": (-2, 0, 26),
+
+    "entrance(Building A)": (-35, 0, 17),
+    "kitchen(Building A)": (-46, 0, 13.3),
+    "dining room(Building A)": (-22, 0, 14),
+
+    "Alice's private toilet(Building A)": (-21, 0, 20),
+    "Alice's private living room(Building A)": (-20, 0, 23),
+    "Alice's private bedroom(Building A)": (-20, 0, 26),
+    "Alice's private balcony(Building A)": (-18, 0, 26),
+
+    "Daisy's private toilet(Building A)": (-27, 0, 20),
+    "Daisy's private living room(Building A)": (-26, 0, 23),
+    "Daisy's private bedroom(Building A)": (-26, 0, 26),
+    "Daisy's private balcony(Building A)": (-24, 0, 26),
+
+    "Lisa's private toilet(Building A)": (-33, 0, 20),
+    "Lisa's private living room(Building A)": (-32, 0, 23),
+    "Lisa's private bedroom(Building A)": (-32, 0, 26),
+    "Lisa's private balcony(Building A)": (-30, 0, 26),
+
+    "Tom's private toilet(Building A)": (-35, 0, 20),
+    "Tom's private living room(Building A)": (-37, 0, 23),
+    "Tom's private bedroom(Building A)": (-35, 0, 26),
+    "Tom's private balcony(Building A)": (-38, 0, 26),
+
+    "Andrew's private toilet(Building A)": (-40, 0, 20),
+    "Andrew's private living room(Building A)": (-42, 0, 23),
+    "Andrew's private bedroom(Building A)": (-40, 0, 26),
+    "Andrew's private balcony(Building A)": (-43, 0, 26),
+
+    "Amy's private toilet(Building A)": (-46, 0, 20),
+    "Amy's private living room(Building A)": (-48, 0, 23),
+    "Amy's private bedroom(Building A)": (-46, 0, 26),
+    "Amy's private balcony(Building A)": (-49, 0, 26),
+
+    "west garden": (12, 0, -5),
+    "east garden": (-34, 0, -5),
+    "square": (11, 0, -20),
+    "basketball court": (-35, 0, -22),
+    "card room": (-20, 0, -46),
+    "north room in library": (-39, 0, -47),
+    "south room in library": (-39, 0, -42),
+    "activity room": (-48, 0, -46),
+
+    "church": (13, 0, -34),
+
+    "office": (-123, 0, -100),
+    "school": (73, 0, -100)
 }
 
 

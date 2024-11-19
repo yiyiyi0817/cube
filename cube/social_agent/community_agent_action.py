@@ -15,7 +15,8 @@ class CommunityAction:
     def get_openai_function_list(self) -> list[OpenAIFunction]:
         return [
             OpenAIFunction(func) for func in [
-                self.go_to, self.do_something,
+                self.go_to,
+                self.do_something,
             ]
         ]
 
@@ -32,7 +33,8 @@ class CommunityAction:
         to a specified room based on the `room_name` argument. It simulates
         the action of going to a different room in a virtual environment. Upon
         successful execution, it returns a dictionary indicating success and
-        the name of the room arrived at.
+        the name of the room arrived at. Note that you can't go into other
+        people's private rooms. And do not go to a room you already in now.
 
         Args:
             room_name (RoomName): The enum member representing the room to

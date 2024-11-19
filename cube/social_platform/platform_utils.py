@@ -72,6 +72,7 @@ class AsyncPlatformUtils:
         if current_time is None:
             current_time = self.sandbox_clock.time_transfer(
                 datetime.now(), self.start_time)
+        print('Current time in sandbox:', current_time)
         trace_insert_query = (
             "INSERT INTO trace (user_id, created_at, action, info) "
             "VALUES (?, ?, ?, ?)")

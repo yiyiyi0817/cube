@@ -74,7 +74,7 @@ class CommunityEnvironment(Environment):
     daily_plan_template = Template("Usually, your daily plan is $plan\n")
 
     current_room_template = Template(
-        "You are at $room now.\n")
+        "You are at $room now. Note that if you want to do_something, first check if you are in the right room, if not, then call the go_to function to go to the right room.\n")
     env_template = Template(
         "$current_room $current_time $daily_plan pick one you want to "
         "perform action that best reflects your current inclination based on "
