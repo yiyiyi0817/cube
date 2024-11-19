@@ -156,6 +156,9 @@ We greatly appreciate your interest in contributing to our open-source initiativ
 
 An essential part of contributing involves not only submitting new features with accompanying tests (and, ideally, examples) but also ensuring that these contributions pass our automated pytest suite. This approach helps us maintain the project's quality and reliability by verifying compatibility and functionality.
 
+## 🎉 Acknowledgment
+
+Thanks to 🍓StrawberryKiller for the dedicated effort in illustrating the workflow diagram and meticulously decorating the scene in Unity3D.
 
 [pytest-image]: https://github.com/camel-ai/camel/actions/workflows/pytest_package.yml/badge.svg
 [pytest-url]: https://github.com/camel-ai/social-simulation/actions/workflows/pytest_package.yml
