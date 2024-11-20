@@ -23,7 +23,7 @@ ______________________________________________________________________
 
 3️⃣ *Evaluation Phase:* All data from the experiment are logged, and after multiple simulations, designers analyze the activities of the agents, such as comparing the impact of different environments and occupations on the degree of social participation of the agents.
 
-### 🎬 Demo Video
+## 🎬 Demo Video
 
 
 https://github.com/user-attachments/assets/fd731734-0e85-4698-b4ec-d95fe54ddee1
@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/fd731734-0e85-4698-b4ec-d95fe54ddee1
 https://github.com/user-attachments/assets/e1522a49-f7b7-473e-98bf-a213de341619
 
 
-### 🔧 Installation
+## 🔧 Installation
 
 ### Step 1: Clone the Repository
 
@@ -75,7 +75,7 @@ pip install --upgrade pip setuptools
 pip install -e .  # This will install dependencies as specified in pyproject.toml
 ```
 
-### 🔌 Unity initialization
+## 🔌 Unity initialization
 
 ### Step 1: 
 Set all the obstacles in the scene to navigation static and bake them, and mount the NavMeshAgent component to all characters in the scene.
