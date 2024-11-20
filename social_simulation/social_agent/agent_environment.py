@@ -4,8 +4,8 @@ import json
 from abc import ABC, abstractmethod
 from string import Template
 
-from social_simulation.social_agent.community_agent_action import CommunityAction
-from social_simulation.clock.clock import Clock
+from cube.social_agent.community_agent_action import CommunityAction
+from cube.clock.clock import Clock
 from datetime import datetime
 
 

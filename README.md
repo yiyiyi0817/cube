@@ -12,7 +12,8 @@ ______________________________________________________________________
 <p align="center">
   <img src='assets/intro.png' width=1000>
 </p>
-🧊 CUBE can assist LLM-powered agents in simulating human daily activities and social interactions within customized Unity3D environments. This could potentially be beneficial in evaluating architectural designs and multi-agent simulation management games. CUBE is an environment built on the foundation of [OASIS](https://github.com/camel-ai/oasis), and its agents are derived from [CAMEL](https://github.com/camel-ai/camel).
+
+🧊 CUBE can assist LLM-powered agents in simulating human daily activities and social interactions within customized Unity3D environments. This could potentially be beneficial in evaluating architectural designs and multi-agent simulation management games. CUBE's codebase is adopted from [OASIS](https://github.com/camel-ai/oasis), and its agents are inherited from [CAMEL](https://github.com/camel-ai/camel).
 
 ### Workflow
 
@@ -31,16 +32,14 @@ https://github.com/user-attachments/assets/fd731734-0e85-4698-b4ec-d95fe54ddee1
 https://github.com/user-attachments/assets/e1522a49-f7b7-473e-98bf-a213de341619
 
 
-
-
 ### 🔧 Installation
 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/camel-ai/oasis.git
+git clone https://github.com/yiyiyi0817/cube.git
 
-cd oasis
+cd cube
 ```
 
 ### Step 2: Create and Activate a Virtual Environment
@@ -50,22 +49,22 @@ Please choose one of the following methods to set up your environment. You only 
 - Option 1: Using Conda (Linux & macOS & windows)
 
 ```bash
-conda create --name oasis python=3.10
-conda activate oasis
+conda create --name cube python=3.10
+conda activate cube
 ```
 
 - Option 2: Using venv (Linux & macOS)
 
 ```bash
-python -m venv oasis-venv
-source oasis-venv/bin/activate
+python -m venv cube-venv
+source cube-venv/bin/activate
 ```
 
 - Option 3: Using venv (Windows)
 
 ```bash
-python -m venv oasis-venv
-oasis-venv\Scripts\activate
+python -m venv cube-venv
+cube-venv\Scripts\activate
 ```
 
 ### Step 3: Install Necessary Packages
@@ -75,6 +74,20 @@ pip install --upgrade pip setuptools
 
 pip install -e .  # This will install dependencies as specified in pyproject.toml
 ```
+
+### 🔌 Unity initialization
+
+### Step 1: 
+Set all the obstacles in the scene to navigation static and bake them, and mount the NavMeshAgent component to all characters in the scene.
+
+### Step 2:
+Create an empty object and attach the `unity\RouterController.cs` script to it.
+
+### Step 3:
+
+Attach the `unity\AgentController.cs` script to each character, with the specific settings as follows. Be sure to add the corresponding message text to each character model. The Agent Name for each character starts from 0 and increases with different numbers. The meaning of Arrival Threshold is the distance in meters within which it is considered as arrival at the destination (changes are not recommended).
+
+![Alt text](image.png)
 
 ## 🏃Quickstart
 
@@ -108,41 +121,25 @@ $env:OPENAI_API_BASE_URL="<insert your OpenAI API BASE URL>"  #(Should you utili
 
 Replace `<insert your OpenAI API key>` with your actual OpenAI API key in each case. Make sure there are no spaces around the `=` sign.
 
-### Step 2: Modify the Configuration File (Optional)
+### Step 2: Modify the Character Information (Optional)
 
-If adjustments to the settings are necessary, you can specify the parameters in the `scripts/reddit_gpt_example/gpt_example.yaml` file. Explanations for each parameter are provided in the comments within the YAML file.
-
-To import your own user and post data, please refer to the JSON file format located in the `/data/reddit/` directory of this repository. Then, update the `user_path` and `pair_path` in the YAML file to point to your data files.
+The directory `data\community\residents_info_7.json` stores information about the characters such as age, occupation, description, etc. You can modify the value of each key as needed before the experiment.
 
 ### Step 3: Run the Main Program
 
 ```bash
-# For Reddit
-python scripts/reddit_gpt_example/reddit_simulation_gpt.py --config_path scripts/reddit_gpt_example/gpt_example.yaml
-
-# For Twitter
-python scripts/twitter_gpt_example/twitter_simulation_large.py --config_path scripts/twitter_gpt_example/gpt_example.yaml
+python scripts/community_simulation.py
 ```
 
-Note: without modifying the Configuration File, running the reddit script requires approximately 14 API requests to call gpt-4, and the cost incurred is minimal. (October 29, 2024)
+By default, gpt-3.5-turbo is used. The script will run until you interrupt the experiment. Please interrupt the program according to the cost you can bear. After the experiment ends, the trajectory will be stored in the db file.
 
-## 🔗 Paper
+## 📖 Paper
 
-To be supplemented after the release on arXiv.
+To be published soon.
 
 ## 💡Tips
 
-### For Twitter Simluation:
-
-- Customizing temporal feature
-
-When simulating on generated users, you can customizing temporal feature in `social_simulation/social_agent/agents_generator.py` by modifying `profile['other_info']['active_threshold']`. For example, you can set it to all 1 if you believe that the generated users should be active the entire time.
-
-### For Reddit Simluation:
-
-- Reddit recommendation system
-
-The Reddit recommendation system is highly time-sensitive. Currently, one time step in the `reddit_simulation_xxx.py`simulates approximately two hours in the agent world, so essentially, new posts are recommended at every time step. To ensure that all posts made by controllable users can be seen by other agents, it is recommended that `the number of agents` × `activate_prob` > `max_rec_post_len` > `round_post_num`.
+Feel free to change the prompt for the agent to perform actions in the `CommunityEnvironment` class of the `social_agent/agent_environment.py`
 
 ## 📢 News
 
@@ -153,15 +150,27 @@ The Reddit recommendation system is highly time-sensitive. Currently, one time s
 
 ## 🔒 Limitation
 
-We would like to thank Douglas for designing the logo of our project.
+Due to my limited time, many of the ideas and features I hoped for are not fully implemented in the current version. I may not update this part of the code in the near future, but perhaps I will continue to develop it when I have time next year.
+
+Codebase: Because the code was adapted from an earlier version of [OASIS](https://github.com/camel-ai/oasis), some of the oasis code remains unused in it, which is a bit redundant.
+
+Meet: At present, when agents meet, I only let them stop for a few seconds, without having a real conversation. This is a major flaw. However, the agent inherited from [CAMEL](https://github.com/camel-ai/camel/tree/master) has a complete interface to do this.
+
+Navigation: This project is purely text-based, without a visual environment. After the agent decides to go somewhere, Unity's navigation system will navigate the agent to the destination based on the three-dimensional coordinates previously stored in Python.
+
+Scale: I only conducted experiments with 7 agents, but this framework should have no limit to the number of agents increasing to dozens. From the python side, because it inherits from [OASIS](https://github.com/camel-ai/oasis), CUBE can also support inference and request distribution for millions of agents, but I'm not sure about the quantity bottleneck of Unity3D in terms of rendering and other aspects.
+
+RAG: Unfortunately, at present, the agent only uses basic memory. However, further support for RAG may be more closely combined with research in social sciences and architecture, helping agents behave more like humans.
 
 ## 🗝️ Contributing to 🧊CUBE
 
-We greatly appreciate your interest in contributing to our open-source initiative. To ensure a smooth collaboration and the success of contributions, we adhere to a set of contributing guidelines similar to those established by CAMEL. For a comprehensive understanding of the steps involved in contributing to our project, please refer to the CAMEL contributing guidelines [here](https://github.com/camel-ai/camel/blob/master/CONTRIBUTING.md). 🤝🚀
+If my code is useful for your research or application, but you still hope for some extended features or want to improve the content I mentioned in the limitations, I would be very happy if you could submit a Pull Request (PR) to me. If you have any questions about my code, do not hesitate to ask in the issues section or contact me via email. 
+
+Here I have provided a schematic diagram of my communication mechanism, which might be helpful for potential contributors.
+
 <p align="center">
   <img src='assets/communication.png' width=600>
 </p>
-An essential part of contributing involves not only submitting new features with accompanying tests (and, ideally, examples) but also ensuring that these contributions pass our automated pytest suite. This approach helps us maintain the project's quality and reliability by verifying compatibility and functionality.
 
 ## 🎉 Acknowledgment
 
