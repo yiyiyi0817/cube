@@ -5,11 +5,11 @@ import random
 
 import pytest
 
-from social_simulation.social_agent.agent import SocialAgent
-from social_simulation.social_platform.channel import Channel
-from social_simulation.social_platform.config import UserInfo
-from social_simulation.social_platform.platform import Platform
-from social_simulation.social_platform.typing import ActionType
+from cube.social_agent.agent import SocialAgent
+from cube.social_platform.channel import Channel
+from cube.social_platform.config import UserInfo
+from cube.social_platform.platform import Platform
+from cube.social_platform.typing import ActionType
 
 parent_folder = osp.dirname(osp.abspath(__file__))
 test_db_filepath = osp.join(parent_folder, "test.db")

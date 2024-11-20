@@ -4,7 +4,7 @@ import threading
 import functools
 import json
 import asyncio
-from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+from cube.social_platform.unity_api.unity_queue_manager import UnityQueueManager
 
 # 全局变量来控制运行
 running = True

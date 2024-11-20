@@ -7,10 +7,10 @@ from datetime import datetime
 
 import pytest
 
-from social_simulation.social_platform.channel import Channel
-from social_simulation.social_platform.platform import Platform
-from social_simulation.social_platform.typing import ActionType
-from social_simulation.testing.show_db import print_db_contents
+from cube.social_platform.channel import Channel
+from cube.social_platform.platform import Platform
+from cube.social_platform.typing import ActionType
+from cube.testing.show_db import print_db_contents
 
 parent_folder = osp.dirname(osp.abspath(__file__))
 test_db_filepath = osp.join(parent_folder, "test.db")

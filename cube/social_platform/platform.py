@@ -7,14 +7,14 @@ from datetime import datetime, timedelta
 from typing import Any
 
 
-from social_simulation.clock.clock import Clock
-from social_simulation.social_platform.database import create_db_async
-from social_simulation.social_platform.platform_utils import AsyncPlatformUtils
-from social_simulation.social_platform.typing import CommunityActionType
-from social_simulation.social_platform.unity_api.unity_server import (
+from cube.clock.clock import Clock
+from cube.social_platform.database import create_db_async
+from cube.social_platform.platform_utils import AsyncPlatformUtils
+from cube.social_platform.typing import CommunityActionType
+from cube.social_platform.unity_api.unity_server import (
     send_position_to_unity, send_stop_to_unity
 )
-from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+from cube.social_platform.unity_api.unity_queue_manager import UnityQueueManager
 
 import logging
 

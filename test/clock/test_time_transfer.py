@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from social_simulation.clock.clock import Clock
+from cube.clock.clock import Clock
 
 
 def test_time_transfer():

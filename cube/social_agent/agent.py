@@ -15,14 +15,14 @@ from camel.types import ModelType, OpenAIBackendRole
 from camel.agents.chat_agent import ChatAgent
 from colorama import Fore, Style
 
-from social_simulation.social_agent.community_agent_action import CommunityAction
-from social_simulation.social_agent.agent_environment import CommunityEnvironment
-from social_simulation.social_platform import Channel
-from social_simulation.social_platform.config import UserInfo
-from social_simulation.clock.clock import Clock
+from cube.social_agent.community_agent_action import CommunityAction
+from cube.social_agent.agent_environment import CommunityEnvironment
+from cube.social_platform import Channel
+from cube.social_platform.config import UserInfo
+from cube.clock.clock import Clock
 
 if TYPE_CHECKING:
-    from social_simulation.social_agent import AgentGraph
+    from cube.social_agent import AgentGraph
 
 
 agent_log = logging.getLogger(name='social.agent')

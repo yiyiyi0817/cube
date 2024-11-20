@@ -1,10 +1,10 @@
 import asyncio
 import random
-from social_simulation.social_platform.unity_api.unity_server import (
+from cube.social_platform.unity_api.unity_server import (
     start_server, stop_server, send_position_to_unity,
     send_stop_to_unity
 )
-from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+from cube.social_platform.unity_api.unity_queue_manager import UnityQueueManager
 
 async def random_position():
     return random.uniform(-5, 5), 0, random.uniform(-5, 5)

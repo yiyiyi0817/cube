@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import igraph as ig
 
-from social_simulation.social_agent.agent import SocialAgent
+from cube.social_agent.agent import SocialAgent
 
 
 class AgentGraph:

@@ -127,11 +127,41 @@ The directory `data\community\residents_info_7.json` stores information about th
 
 ### Step 3: Run the Main Program
 
+Please make sure to open the Unity project, but do not press the play button.
+
 ```bash
 python scripts/community_simulation.py
 ```
+First, you will see the output about the daily plan for each agent, like this:
 
-By default, gpt-3.5-turbo is used. The script will run until you interrupt the experiment. Please interrupt the program according to the cost you can bear. After the experiment ends, the trajectory will be stored in the db file.
+```bash
+6: model type ModelType.GPT_3_5_TURBO
+Agent 6's daily plan: As a retired nurse, Amy's daily schedule is likely to be well-balanced and structured. Here's a brief outline of her daily routine:
+
+- 7:00 am - Wake up and enjoy a peaceful morning in the garden, tending to plants and enjoying nature.
+- 8:30 am - Have a healthy breakfast and plan out the day's knitting projects or volunteer activities.
+- 10:00 am - Volunteer work at the local community center, engaging in activities related to health and wellness.
+- 1:00 pm - Lunch break, maybe a light meal from the garden's fresh produce.
+- 2:00 pm - Continue volunteering or spend time knitting thoughtful gifts for loved ones.
+- 5:00 pm - Relax with a cup of tea and some knitting, reflecting on the day's activities.
+- 7:00 pm - Dinner with family, sharing stories and lessons of compassion and resilience.
+- 9:00 pm - Wind down with some light reading or knitting before bedtime.
+- 11:00 pm - Lights out, ensuring a restful sleep until 7:00 am the next day.
+
+Amy's schedule reflects a balance of personal hobbies, volunteer work, and family time, all while ensuring she gets enough rest to recharge for the next day.
+```
+
+When the plans for all 7 agents have been successfully generated, you will see...
+
+```bash
+Server started.
+please start unity in 10s...
+
+Waiting for connections from Unity...
+```
+At this point, please click the play button in Unity within 10 seconds, and then the simulation will begin.
+
+By default, gpt-3.5-turbo is used. The script will run until you interrupt the experiment. Please interrupt the program according to the cost you can bear. Please make sure to stop in Unity first, then interrupt execution in Python. After the experiment ends, the trajectory will be stored in the db file. 
 
 ## 📖 Paper
 
@@ -152,15 +182,15 @@ Feel free to change the prompt for the agent to perform actions in the `Communit
 
 Due to my limited time, many of the ideas and features I hoped for are not fully implemented in the current version. I may not update this part of the code in the near future, but perhaps I will continue to develop it when I have time next year.
 
-Codebase: Because the code was adapted from an earlier version of [OASIS](https://github.com/camel-ai/oasis), some of the oasis code remains unused in it, which is a bit redundant.
+*Codebase:* Because the code was adapted from an earlier version of [OASIS](https://github.com/camel-ai/oasis), some of the oasis code remains unused in it, which is a bit redundant.
 
-Meet: At present, when agents meet, I only let them stop for a few seconds, without having a real conversation. This is a major flaw. However, the agent inherited from [CAMEL](https://github.com/camel-ai/camel/tree/master) has a complete interface to do this.
+*Meet:* At present, when agents meet, I only let them stop for a few seconds, without having a real conversation. This is a major flaw. However, the agent inherited from [CAMEL](https://github.com/camel-ai/camel/tree/master) has a complete interface to do this.
 
-Navigation: This project is purely text-based, without a visual environment. After the agent decides to go somewhere, Unity's navigation system will navigate the agent to the destination based on the three-dimensional coordinates previously stored in Python.
+*Navigation:* This project is purely text-based, without a visual environment. After the agent decides to go somewhere, Unity's navigation system will navigate the agent to the destination based on the three-dimensional coordinates previously stored in Python.
 
-Scale: I only conducted experiments with 7 agents, but this framework should have no limit to the number of agents increasing to dozens. From the python side, because it inherits from [OASIS](https://github.com/camel-ai/oasis), CUBE can also support inference and request distribution for millions of agents, but I'm not sure about the quantity bottleneck of Unity3D in terms of rendering and other aspects.
+*Scale:* I only conducted experiments with 7 agents, but this framework should have no limit to the number of agents increasing to dozens. From the python side, because it inherits from [OASIS](https://github.com/camel-ai/oasis), CUBE can also support inference and request distribution for millions of agents, but I'm not sure about the quantity bottleneck of Unity3D in terms of rendering and other aspects.
 
-RAG: Unfortunately, at present, the agent only uses basic memory. However, further support for RAG may be more closely combined with research in social sciences and architecture, helping agents behave more like humans.
+*RAG:* Unfortunately, at present, the agent only uses basic memory. However, further support for RAG may be more closely combined with research in social sciences and architecture, helping agents behave more like humans.
 
 ## 🗝️ Contributing to 🧊CUBE
 

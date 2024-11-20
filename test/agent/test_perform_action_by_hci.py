@@ -4,12 +4,12 @@ import os.path as osp
 
 import pytest
 
-from social_simulation.social_agent.agent import SocialAgent
-from social_simulation.social_agent.agents_generator import \
+from cube.social_agent.agent import SocialAgent
+from cube.social_agent.agents_generator import \
     generate_controllable_agents
-from social_simulation.social_platform.channel import Channel
-from social_simulation.social_platform.config import UserInfo
-from social_simulation.social_platform.platform import Platform
+from cube.social_platform.channel import Channel
+from cube.social_platform.config import UserInfo
+from cube.social_platform.platform import Platform
 
 parent_folder = osp.dirname(osp.abspath(__file__))
 test_db_filepath = osp.join(parent_folder, "test.db")

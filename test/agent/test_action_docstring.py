@@ -2,8 +2,8 @@ from typing import List
 
 from camel.functions import OpenAIFunction
 
-from social_simulation.social_agent.agent_action import SocialAction
-from social_simulation.social_agent.community_agent_action import CommunityAction
+from cube.social_agent.agent_action import SocialAction
+from cube.social_agent.community_agent_action import CommunityAction
 
 
 def test_transfer_to_openai_function():

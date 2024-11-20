@@ -1,9 +1,9 @@
 import os.path as osp
 
-from social_simulation.social_agent.agent import SocialAgent
-from social_simulation.social_agent.agent_graph import AgentGraph
-from social_simulation.social_platform.channel import Channel
-from social_simulation.social_platform.config import UserInfo
+from cube.social_agent.agent import SocialAgent
+from cube.social_agent.agent_graph import AgentGraph
+from cube.social_platform.channel import Channel
+from cube.social_platform.config import UserInfo
 
 
 def test_agent_graph(tmp_path):

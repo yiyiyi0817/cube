@@ -1,6 +1,6 @@
 from datetime import datetime
-from social_simulation.clock.clock import Clock
-from social_simulation.social_agent.agent_environment import CommunityEnvironment
+from cube.clock.clock import Clock
+from cube.social_agent.agent_environment import CommunityEnvironment
 import pytest
 
 

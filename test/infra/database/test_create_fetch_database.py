@@ -5,7 +5,7 @@ import sqlite3
 
 import pytest
 
-from social_simulation.social_platform.database import (
+from cube.social_platform.database import (
     create_db, fetch_rec_table_as_matrix, fetch_table_from_db)
 
 parent_folder = osp.dirname(osp.abspath(__file__))

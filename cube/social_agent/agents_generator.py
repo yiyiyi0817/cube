@@ -11,10 +11,10 @@ import pandas as pd
 from datetime import datetime
 from camel.types.enums import ModelType
 
-from social_simulation.social_agent import AgentGraph, SocialAgent
-from social_simulation.social_platform import Channel
-from social_simulation.social_platform.config import UserInfo
-from social_simulation.clock.clock import Clock
+from cube.social_agent import AgentGraph, SocialAgent
+from cube.social_platform import Channel
+from cube.social_platform.config import UserInfo
+from cube.clock.clock import Clock
 
 
 async def generate_agents(

@@ -9,18 +9,18 @@ from datetime import datetime
 from colorama import Back
 from yaml import safe_load
 from colorama import Fore, Style
-# import sys
-# sys.path.append(
-#     os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+import sys
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
-from social_simulation.clock.clock import Clock
-from social_simulation.social_agent.agents_generator import generate_community_agents
-from social_simulation.social_platform.channel import Channel
-from social_simulation.social_platform.platform import Platform
-from social_simulation.social_platform.typing import CommunityActionType
-from social_simulation.testing.show_db import print_db_contents
-from social_simulation.social_platform.unity_api.unity_queue_manager import UnityQueueManager
-from social_simulation.social_platform.unity_api.unity_server import start_server, stop_server
+from cube.clock.clock import Clock
+from cube.social_agent.agents_generator import generate_community_agents
+from cube.social_platform.channel import Channel
+from cube.social_platform.platform import Platform
+from cube.social_platform.typing import CommunityActionType
+from cube.testing.show_db import print_db_contents
+from cube.social_platform.unity_api.unity_queue_manager import UnityQueueManager
+from cube.social_platform.unity_api.unity_server import start_server, stop_server
 
 
 parser = argparse.ArgumentParser(description="Arguments for script.")
