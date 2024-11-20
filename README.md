@@ -12,17 +12,15 @@ ______________________________________________________________________
 <p align="center">
   <img src='assets/intro.png' width=1000>
 </p>
-🧊 CUBE is a scalable, open-source social media simulator that integrates large language models with rule-based agents to realistically mimic the behavior of up to one million users on platforms like Twitter and Reddit. It's designed to facilitate the study of complex social phenomena such as information spread, group polarization, and herd behavior, offering a versatile tool for exploring diverse social dynamics and user interactions in digital environments.
+🧊 CUBE can assist LLM-powered agents in simulating human daily activities and social interactions within customized Unity3D environments. This could potentially be beneficial in evaluating architectural designs and multi-agent simulation management games. CUBE is an environment built on the foundation of [OASIS](https://github.com/camel-ai/oasis), and its agents are derived from [CAMEL](https://github.com/camel-ai/camel).
 
 ### Workflow
 
-📈 Scalability: OASIS supports simulations of up to one million agents, enabling studies of social media dynamics at a scale comparable to real-world platforms.
+1️⃣ *Initialization Phase:* This phase involves the design and modeling of the environment, which is then imported into Unity3D for navigation mesh setup, and character models are imported as navigation agents. Room coordinates are configured in Python, and each agent's occupation, age, description, and other information are initialized in a JSON file.
 
-📲 ️Dynamic Environments: Adapts to real-time changes in social networks and content, mirroring the fluid dynamics of platforms like Twitter and Reddit for authentic simulation experiences.
+2️⃣ *Experimentation Phase:* The virtual experiment begins at a specified time, with real-world time linearly mapped to the virtual-world  time. Each agent, based on a large model, decides its actions according to its profile, generated daily plan, and the simulated time. Social interactions are triggered when agents encounter each other.
 
-👍🏼 Diverse Action Spaces: Agents can perform 21 actions, such as following, commenting, and reposting, allowing for rich, multi-faceted interactions.
-
-🔥 Integrated Recommendation Systems: Features interest-based and hot-score-based recommendation algorithms, simulating how users discover content and interact within social media platforms.
+3️⃣ *Evaluation Phase:* All data from the experiment are logged, and after multiple simulations, designers analyze the activities of the agents, such as comparing the impact of different environments and occupations on the degree of social participation of the agents.
 
 ### 🎬 Demo Video
 
