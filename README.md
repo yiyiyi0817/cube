@@ -92,7 +92,7 @@ Attach the `unity\AgentController.cs` script to each character, with the specifi
 ### Reference Scenes:
 See `unity\example_envionment.unitypackage`.
 
-## 🏃Quickstart
+## 🏄‍♀️ Quickstart
 
 ### Step 1: Set Up Environment Variables
 
