@@ -9,6 +9,9 @@ from datetime import datetime
 from colorama import Back
 from yaml import safe_load
 from colorama import Fore, Style
+# import sys
+# sys.path.append(
+#     os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 from social_simulation.clock.clock import Clock
 from social_simulation.social_agent.agents_generator import generate_community_agents
