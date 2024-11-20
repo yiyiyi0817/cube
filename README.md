@@ -87,7 +87,9 @@ Create an empty object and attach the `unity\RouterController.cs` script to it.
 
 Attach the `unity\AgentController.cs` script to each character, with the specific settings as follows. Be sure to add the corresponding message text to each character model. The Agent Name for each character starts from 0 and increases with different numbers. The meaning of Arrival Threshold is the distance in meters within which it is considered as arrival at the destination (changes are not recommended).
 
-![Alt text](image.png)
+<p align="center">
+  <img src='assets/image.png' width=300>
+</p>
 
 ### Reference Scenes:
 See [`unity\example_envionment.unitypackage`](https://github.com/yiyiyi0817/cube/blob/main/unity/example_envionment.unitypackage).
