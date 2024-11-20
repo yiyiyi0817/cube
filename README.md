@@ -89,6 +89,9 @@ Attach the `unity\AgentController.cs` script to each character, with the specifi
 
 ![Alt text](image.png)
 
+### Reference Scenes:
+See `unity\example_envionment.unitypackage`.
+
 ## 🏃Quickstart
 
 ### Step 1: Set Up Environment Variables
