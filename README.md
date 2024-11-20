@@ -75,7 +75,7 @@ pip install --upgrade pip setuptools
 pip install -e .  # This will install dependencies as specified in pyproject.toml
 ```
 
-## 🔌 Unity initialization
+## 🔌 Unity Initialization
 
 ### Step 1: 
 Set all the obstacles in the scene to navigation static and bake them, and mount the NavMeshAgent component to all characters in the scene.
@@ -90,7 +90,7 @@ Attach the `unity\AgentController.cs` script to each character, with the specifi
 ![Alt text](image.png)
 
 ### Reference Scenes:
-See `unity\example_envionment.unitypackage`.
+See [`unity\example_envionment.unitypackage`](https://github.com/yiyiyi0817/cube/blob/main/unity/example_envionment.unitypackage).
 
 ## 🏄‍♀️ Quickstart
 
